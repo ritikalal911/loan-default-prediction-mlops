@@ -144,10 +144,8 @@ def main() -> None:
         parameters["model_type"],
     )
 
-    mlflow.set_tracking_uri(
-    "sqlite:///D:/Khushi/Seneca/SEM 2/MLOps/Project/"
-    "loan-default-prediction-mlops/mlflow.db"
-)
+    mlflow.set_tracking_uri("sqlite:///mlflow.db")
+
     mlflow.set_experiment(experiment_name)
 
     with mlflow.start_run(run_name=run_name):
