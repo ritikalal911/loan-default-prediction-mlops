@@ -4,10 +4,13 @@ prepare:
 
 train:
   experiment_name: loan-default-prediction
-  run_name: random-forest-balanced
   model_type: random_forest
-  n_estimators: 200
-  max_depth: 12
-  min_samples_split: 5
+  run_name: random-forest-balanced-final
+  n_estimators: 100
+  max_depth: 10
+  min_samples_split: 2
   random_state: 42
   class_weight: balanced
+
+evaluate:
+  threshold: 0.5

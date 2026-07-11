@@ -7,11 +7,16 @@ stages:
     params:
       - prepare
     outs:
-      - data/processed/X_train.csv
-      - data/processed/X_test.csv
-      - data/processed/y_train.csv
-      - data/processed/y_test.csv
-      - data/processed/preprocessor.pkl
+      - data/processed/X_train.csv:
+          cache: false
+      - data/processed/X_test.csv:
+          cache: false
+      - data/processed/y_train.csv:
+          cache: false
+      - data/processed/y_test.csv:
+          cache: false
+      - data/processed/preprocessor.pkl:
+          cache: false
 
   train:
     cmd: python src/train.py
@@ -24,7 +29,8 @@ stages:
     params:
       - train
     outs:
-      - models/model.joblib
+      - models/model.joblib:
+          cache: false
 
   evaluate:
     cmd: python src/evaluate.py
