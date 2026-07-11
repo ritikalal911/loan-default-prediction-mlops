@@ -3,9 +3,9 @@ prepare:
   random_state: 42
 
 train:
-  experiment_name: loan-default-prediction
+  experiment_name: credit-card-fraud-detection
   model_type: random_forest
-  run_name: random-forest-balanced-final
+  run_name: random-forest-balanced
   n_estimators: 100
   max_depth: 10
   min_samples_split: 2
