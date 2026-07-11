@@ -1,0 +1,45 @@
+stages:
+  prepare:
+    cmd: python src/prepare.py
+    deps:
+      - src/prepare.py
+      - data/raw/credit_risk_dataset.csv
+    params:
+      - prepare
+    outs:
+      - data/processed/X_train.csv
+      - data/processed/X_test.csv
+      - data/processed/y_train.csv
+      - data/processed/y_test.csv
+      - data/processed/preprocessor.pkl
+
+  train:
+    cmd: python src/train.py
+    deps:
+      - src/train.py
+      - data/processed/X_train.csv
+      - data/processed/X_test.csv
+      - data/processed/y_train.csv
+      - data/processed/y_test.csv
+    params:
+      - train
+    outs:
+      - models/model.joblib
+
+  evaluate:
+    cmd: python src/evaluate.py
+    deps:
+      - src/evaluate.py
+      - models/model.joblib
+      - data/processed/X_test.csv
+      - data/processed/y_test.csv
+    params:
+      - evaluate
+    metrics:
+      - reports/metrics.json:
+          cache: false
+    outs:
+      - reports/figures/confusion_matrix.png:
+          cache: false
+      - reports/figures/roc_curve.png:
+          cache: false
