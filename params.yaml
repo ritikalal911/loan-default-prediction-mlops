@@ -1,0 +1,10 @@
+prepare:
+  test_size: 0.2
+  random_state: 42
+
+train:
+  run_name: baseline-logistic-regression
+  model_type: logistic_regression
+  max_iter: 1000
+  C: 1.0
+  random_state: 42
