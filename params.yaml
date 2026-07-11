@@ -3,8 +3,10 @@ prepare:
   random_state: 42
 
 train:
+  experiment_name: loan-default-prediction
   run_name: baseline-logistic-regression
   model_type: logistic_regression
-  max_iter: 1000
   C: 1.0
+  max_iter: 1000
   random_state: 42
+  class_weight: null
