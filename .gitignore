@@ -216,3 +216,21 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+
+# MLflow local files
+mlruns/
+mlflow.db
+mlflow.db-shm
+mlflow.db-wal
+
+# Generated models
+models/*.joblib
+models/*.pkl
+
+# Generated processed data
+data/processed/
+
+# Local IDE settings
+.vscode/
+.idea/
