@@ -7,17 +7,6 @@ An end-to-end MLOps project for predicting whether a loan is **Good** or **Bad**
 
 ---
 
-## Project Requirements Coverage
-
-| Rubric Part                                                 | Requirement                                                    | Project Evidence                               |
-| ----------------------------------------------------------- | -------------------------------------------------------------- | ---------------------------------------------- |
-| **Part 1 — Dataset Selection & Documentation (25%)** | Source, size, features, target, quality, split, DVC versioning | Dataset documentation + preprocessing workflow |
-| **Part 2 — Architecture Design (25%)**               | Pipeline diagram, technology choices, deployment strategy      | Architecture section + diagram                 |
-| **Part 3 — DVC Pipeline (25%)**                      | Prepare, train, evaluate, remote storage, reproducibility      | `dvc.yaml`, DVC tracking, `dvc repro`      |
-| **Part 4 — Experiment Tracking (25%)**               | MLflow, baseline, 2 experiments, comparison screenshots        | 3 MLflow runs + comparison screenshots         |
-
----
-
 # Part 1 — Dataset Selection and Documentation
 
 ## Dataset Overview
