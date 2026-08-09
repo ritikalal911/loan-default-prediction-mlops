@@ -587,23 +587,6 @@ mlflow ui
 
 Open the local MLflow URL shown in the terminal.
 
----
-
-# Final Deliverables
-
-| Deliverable                            | Location                                                          |
-| -------------------------------------- | ----------------------------------------------------------------- |
-| **GitHub Repository URL**        | `https://github.com/ritikalal911/loan-default-prediction-mlops` |
-| **Dataset Documentation**        | `reports/dataset_documentation.md`                              |
-| **Architecture Diagram**         | `reports/architecture_diagram.png`                              |
-| **DVC Pipeline**                 | `dvc.yaml`                                                      |
-| **MLflow Experiment Runs**       | `reports/mlflow/01_all_runs.png`                                |
-| **MLflow Comparison Screenshot** | `reports/mlflow/02_compare_runs.png`                            |
-| **Best Run Screenshot**          | `reports/mlflow/03_best_run.png`                                |
-| **MLflow Model Evidence**        | `reports/mlflow/04_model_artifact.png`                          |
-| **MLflow Metrics Screenshot**    | `reports/mlflow/05_model_metrics.png`                           |
-| **Training Evidence**            | `reports/mlflow/06_model_training.png`                          |
-| **Project Documentation**        | `README.md`                                                     |
 
 ---
 
