@@ -74,17 +74,17 @@ stages:
         train:
           experiment_name: loan-default-prediction
           model_type: random_forest
-          run_name: random-forest-balanced
-          n_estimators: 100
-          max_depth: 10
-          min_samples_split: 2
+          run_name: 03-rf-experiment-2
+          n_estimators: 200
+          max_depth: 15
+          min_samples_split: 5
           random_state: 42
           class_weight: balanced
     outs:
     - path: models/model.joblib
       hash: md5
-      md5: 1addbbc5e509273e7f4f02fe9cbbfbd2
-      size: 4913001
+      md5: 01f4fde19d76cb3838cd099bd117479c
+      size: 26982121
   evaluate:
     cmd: python src/evaluate.py
     deps:
@@ -98,8 +98,8 @@ stages:
       size: 33057
     - path: models/model.joblib
       hash: md5
-      md5: 1addbbc5e509273e7f4f02fe9cbbfbd2
-      size: 4913001
+      md5: 01f4fde19d76cb3838cd099bd117479c
+      size: 26982121
     - path: src/evaluate.py
       hash: md5
       md5: 649a3aa004bbc80fdaea0faece2bfef1
@@ -111,13 +111,13 @@ stages:
     outs:
     - path: reports/figures/confusion_matrix.png
       hash: md5
-      md5: 8c633cdf61bfb9a081acd39d3874cdb7
-      size: 64728
+      md5: 6b33ed49dc8d7b5d81cb5e74fbe477c0
+      size: 68590
     - path: reports/figures/roc_curve.png
       hash: md5
-      md5: 20ba90de3c49d06ca188b7fed7457869
-      size: 96972
+      md5: d82a5ede165a6632b6d797f7548e7304
+      size: 94792
     - path: reports/metrics.json
       hash: md5
-      md5: 3b73c39a7b1ef208b36416c9e0348ff0
+      md5: a9ff033b40abc481804eea87026c41eb
       size: 217
