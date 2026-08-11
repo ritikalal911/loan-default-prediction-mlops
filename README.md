@@ -401,7 +401,7 @@ reports/metrics.json
 ### 1. Clone the Repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/ritikalal911/loan-default-prediction-mlops.git
 cd loan-default-prediction
 ```
 
