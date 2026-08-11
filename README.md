@@ -1,156 +1,245 @@
-# Loan Default Prediction – MLOps
+# Loan Default Prediction — MLOps
 
-## Project Overview
+An end-to-end MLOps project for predicting loan quality as **Good** or **Bad** using financial and demographic customer information.
 
-This project implements a reproducible MLOps workflow for **Loan Default Prediction**. The system uses customer financial and demographic information to classify loan quality as either **Good** or **Bad**.
+This repository covers the complete lifecycle from dataset preparation and experiment tracking to cloud deployment, CI/CD, drift monitoring, and conditional model retraining.
 
-Phase 1 focuses on:
-
-- Dataset documentation and quality assessment
-- Reproducible preprocessing
-- Train/validation/test splitting
-- DVC data and model versioning
-- A three-stage DVC pipeline
-- MLflow experiment tracking
-- Baseline and parameterized model experiments
-- Final model evaluation
-
----
-
-## Project Architecture
-
-![Phase 1 MLOps Architecture](reports/architecture/phase1_architecture.png)
-
-The Phase 1 DVC workflow is:
+## Project Workflow
 
 ```text
-prepare → train → evaluate
+Raw Dataset
+    ↓
+DVC Prepare
+    ↓
+Train / Validation / Test
+    ↓
+Model Training
+    ↓
+MLflow Experiment Tracking
+    ↓
+Selected Random Forest Model
+    ↓
+Final Test Evaluation
+    ↓
+FastAPI
+    ↓
+Docker
+    ↓
+Render
+    ↓
+GitHub Actions CI/CD
+    ↓
+EvidentlyAI Drift Monitoring
+    ↓
+Conditional Retraining
 ```
 
-The project keeps the test set separate from training and MLflow model selection.
+## Documentation
 
----
+Detailed project documentation is separated by topic:
+
+| Document                                                      | Description                                                                             |
+| ------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
+| [Dataset Documentation](reports/docs/dataset_documentation.md) | Dataset source, features, quality, outliers, preprocessing, split, and DVC versioning   |
+| [Phase 1 Documentation](reports/docs/phase1.md)                | Dataset pipeline, architecture, DVC, MLflow experiments, selected model, and evaluation |
+| [Phase 2 Documentation](reports/docs/phase2.md)                | FastAPI, Docker, Render deployment, CI/CD, monitoring, drift detection, and retraining  |
+| [Model Card](model_card.md)                                    | Intended use, performance, limitations, fairness considerations, and model lifecycle    |
 
 ## Dataset
 
-- **Source:** Kaggle – Credit Risk Dataset v0
+- **Source:** Kaggle — Credit Risk Dataset v0
 - **Rows:** 37,408
-- **Original columns:** 10
-- **Task:** Binary classification
+- **Columns:** 10
 - **Target:** `loan_quality`
 - **Classes:** `Good`, `Bad`
+- **Predictive variables:** 8
+- **Processed model features:** 17
 
-Target distribution:
+The dataset has a class imbalance:
 
 | Class | Records | Percentage |
 | ----- | ------: | ---------: |
 | Good  |  33,254 |     88.90% |
 | Bad   |   4,154 |     11.10% |
 
-The complete dataset analysis is available here:
+See the [full dataset documentation](reports/docs/dataset_documentation.md).
 
-[Dataset Documentation](reports/docs/dataset_documentation.md)
+## Selected Model
 
----
+The selected Phase 1 model is a **Random Forest Classifier**.
 
-## Data Quality
-
-The dataset contains:
-
-- **0 duplicate rows**
-- 2 missing values in `marital_status`
-- 2 missing values in `gender`
-- 2 missing values in `compensation_charged`
-- 103 missing values in `client_type`
-- No missing values in the target
-
-Numeric variables were also assessed for potential outliers using the IQR method. Potential financial outliers were retained because unusually large monetary values may still represent valid observations.
-
-Preprocessing includes:
-
-- Median imputation for numeric features
-- Most-frequent imputation for categorical features
-- One-hot encoding for categorical variables
-- Standard scaling for numeric variables
-- Removal of the identifier column `account_number`
-
-After preprocessing, the model receives **17 features**.
-
----
-
-## Data Split
-
-The dataset is split using stratification:
-
-| Split      | Percentage | Records | Purpose                      |
-| ---------- | ---------: | ------: | ---------------------------- |
-| Train      |        70% |  26,184 | Model training               |
-| Validation |        15% |   5,612 | MLflow experiment comparison |
-| Test       |        15% |   5,612 | Final evaluation             |
-
-`random_state=42` is used for reproducibility.
-
----
-
-## Technology Stack
-
-| Technology     | Purpose                             | Justification                                                      |
-| -------------- | ----------------------------------- | ------------------------------------------------------------------ |
-| Python         | Main development language           | Strong ecosystem for ML and MLOps                                  |
-| Pandas / NumPy | Data processing                     | Efficient tabular and numerical operations                         |
-| Scikit-learn   | Preprocessing and modeling          | Reproducible pipelines and standard ML algorithms                  |
-| DVC            | Data/model versioning and pipelines | Separates large artifacts from Git and enables reproducible stages |
-| MLflow         | Experiment tracking                 | Records parameters, metrics, runs, and model artifacts             |
-| Git / GitHub   | Source control and collaboration    | Supports feature branches, history, and team integration           |
-
-### Planned Phase 2 Technologies
-
-The Phase 2 deployment path is planned to use:
-
-```text
-FastAPI → Docker → Cloud Deployment → Monitoring → CI/CD
+```yaml
+n_estimators: 200
+max_depth: 15
+min_samples_split: 5
+random_state: 42
+class_weight: balanced
 ```
 
-FastAPI, Docker, EvidentlyAI, and GitHub Actions are shown as future deployment components and are not treated as completed Phase 1 functionality.
+Final test performance:
 
----
+| Metric              | Result |
+| ------------------- | -----: |
+| Accuracy            | 0.7281 |
+| Precision (`Bad`) | 0.2424 |
+| Recall (`Bad`)    | 0.6822 |
+| F1 (`Bad`)        | 0.3577 |
+| ROC-AUC             | 0.7995 |
 
-## Deployment Strategy
+See [Phase 1 Documentation](reports/docs/phase1.md) for the full DVC and MLflow workflow.
 
-The selected deployment strategy is **online inference**.
+## Public API
 
-For Phase 2, a trained model will be exposed through a FastAPI endpoint so that a new applicant record can receive a prediction on demand.
+The model is deployed as a FastAPI service using Docker and Render.
 
-Planned flow:
+**API:**
+https://loan-default-prediction-mlops-gpz6.onrender.com
+
+**Swagger UI:**
+https://loan-default-prediction-mlops-gpz6.onrender.com/docs
+
+**Health endpoint:**
+https://loan-default-prediction-mlops-gpz6.onrender.com/health
+
+Available endpoints:
 
 ```text
-Client Request
-    ↓
-FastAPI
-    ↓
-Preprocessing
-    ↓
-Selected Model
-    ↓
-Good / Bad Prediction
+GET  /
+GET  /health
+POST /predict
 ```
 
----
+Example prediction request:
+
+```json
+{
+  "total_investment": 50000,
+  "current_balance": 12000,
+  "marital_status": "Married",
+  "gender": "Male",
+  "due_payment": 2500,
+  "compensation_charged": "No",
+  "client_type": "Individual",
+  "repay_mode": "Monthly"
+}
+```
+
+## CI/CD
+
+GitHub Actions automatically performs:
+
+```text
+Linting
+→ Formatting Check
+→ Unit Tests
+→ Data Validation
+→ Docker Build
+→ Render Auto-Deploy after successful checks on main
+```
+
+Workflow:
+
+```text
+.github/workflows/ci-cd.yml
+```
+
+## Monitoring & Retraining
+
+EvidentlyAI is used for feature drift monitoring.
+
+Latest demonstration:
+
+| Metric             | Result |
+| ------------------ | -----: |
+| Monitored features |      8 |
+| Drifted features   |      5 |
+| Drift share        |  0.625 |
+| Threshold          |   0.50 |
+| Drift detected     |    Yes |
+
+Detected drift triggers the retraining workflow.
+
+Current vs retrained candidate:
+
+| Metric              |          Current |        Candidate |
+| ------------------- | ---------------: | ---------------: |
+| Accuracy            | **0.7281** |           0.7274 |
+| Precision (`Bad`) |           0.2424 | **0.2485** |
+| Recall (`Bad`)    |           0.6822 | **0.7191** |
+| F1 (`Bad`)        |           0.3577 | **0.3693** |
+| ROC-AUC             |           0.7995 | **0.8078** |
+
+See [Phase 2 Documentation](reports/docs/phase2.md) for the complete monitoring and retraining workflow.
+
+## Project Evidence
+
+The detailed phase documents contain all screenshots. Key project evidence is also shown below.
+
+### Phase 1 Architecture
+
+![Phase 1 Architecture](reports/architecture/phase1_architecture.png)
+
+### MLflow Experiment Comparison
+
+![MLflow Metric Comparison](reports/mlflow/04_compare_metrics.png)
+
+### Final Model Evaluation
+
+![ROC Curve](reports/figures/roc_curve.png)
+
+### Public API Deployment
+
+![Public API Prediction](reports/deployment/02_public_api_prediction.png)
+
+### CI/CD
+
+![GitHub Actions Passed](reports/cicd/01_github_actions_passed.png)
+
+![Render Auto Deploy](reports/cicd/02_render_auto_deploy.png)
+
+### Monitoring and Retraining
+
+![EvidentlyAI Data Drift](reports/monitoring/01_data_drift.png)
+
+![Retraining Output](reports/monitoring/02_retraining_output.png)
+
+For the complete set of Phase 1 images, see [Phase 1 Documentation](reports/docs/phase1.md).
+For the complete deployment, CI/CD, monitoring, and retraining evidence, see [Phase 2 Documentation](reports/docs/phase2.md).
 
 ## Repository Structure
 
 ```text
-.
-├── .dvc/
+loan-default-prediction-mlops/
+├── .github/
+│   └── workflows/
+│       └── ci-cd.yml
+├── app/
+│   ├── __init__.py
+│   ├── main.py
+│   └── schemas.py
 ├── data/
-│   ├── raw/
-│   └── processed/
+│   ├── processed/
+│   └── raw/
+├── deployment_artifacts/
 ├── models/
+├── monitoring/
+│   ├── drift_detection.py
+│   ├── retrain.py
+│   └── run_monitoring.py
 ├── reports/
 │   ├── architecture/
 │   │   └── phase1_architecture.png
+│   ├── cicd/
+│   │   ├── 01_github_actions_passed.png
+│   │   ├── 02_render_auto_deploy.png
+│   │   └── 03_main_passed_checks.png
+│   ├── deployment/
+│   │   ├── 01_render_deployment.png
+│   │   └── 02_public_api_prediction.png
 │   ├── docs/
-│   │   └── dataset_documentation.md
+│   │   ├── dataset_documentation.md
+│   │   ├── phase1.md
+│   │   └── phase2.md
 │   ├── figures/
 │   │   ├── confusion_matrix.png
 │   │   └── roc_curve.png
@@ -163,325 +252,78 @@ Good / Bad Prediction
 │   │   ├── 06_best_run_detail.png
 │   │   ├── 07_model_artifact.png
 │   │   └── 08_model_training.png
-│   └── metrics.json
+│   └── monitoring/
+│       ├── 01_data_drift.png
+│       ├── 02_retraining_output.png
+│       ├── drift_report.html
+│       ├── drift_report.json
+│       ├── drift_status.json
+│       └── retraining_comparison.json
 ├── src/
 │   ├── prepare.py
 │   ├── train.py
 │   └── evaluate.py
+├── Dockerfile
 ├── dvc.yaml
 ├── dvc.lock
+├── model_card.md
 ├── params.yaml
 ├── requirements.txt
+├── requirements-api.txt
+├── requirements-dev.txt
+├── requirements-monitoring.txt
 └── README.md
 ```
 
----
-
-## DVC Pipeline
-
-The DVC pipeline contains the three required stages.
-
-### 1. Prepare
-
-```text
-src/prepare.py
-```
-
-Responsibilities:
-
-- Load the raw dataset
-- Validate the target
-- Drop `account_number`
-- Handle missing values
-- Encode categorical variables
-- Scale numeric variables
-- Create 70/15/15 splits
-- Save processed data and preprocessing artifact
-
-### 2. Train
-
-```text
-src/train.py
-```
-
-Responsibilities:
-
-- Load training and validation data
-- Train the selected classification model
-- Calculate validation metrics
-- Log parameters and metrics to MLflow
-- Save the trained model as `models/model.joblib`
-
-### 3. Evaluate
-
-```text
-src/evaluate.py
-```
-
-Responsibilities:
-
-- Load the selected model
-- Evaluate only on the test set
-- Calculate final metrics
-- Save `reports/metrics.json`
-- Generate confusion matrix
-- Generate ROC curve
-
-### Pipeline DAG
-
-```text
-Raw Dataset
-    ↓
- prepare
-    ↓
-Train / Validation / Test
-    ↓
-  train
-    ↓
-Selected Model
-    ↓
- evaluate
-    ↓
-Metrics + Figures
-```
-
-Run the complete pipeline with:
-
-```bash
-dvc repro
-```
-
-View the DAG with:
-
-```bash
-dvc dag
-```
-
----
-
-## DVC Remote Storage
-
-A DVC remote named `storage` is configured for DVC-tracked artifacts.
-
-Verify the remote:
-
-```bash
-dvc remote list
-```
-
-Push artifacts:
-
-```bash
-dvc push
-```
-
-Check synchronization:
-
-```bash
-dvc status -c
-```
-
-Pull tracked artifacts when required:
+## Reproduce Phase 1
 
 ```bash
 dvc pull
-```
-
----
-
-## MLflow Experiment Tracking
-
-MLflow is used to track a baseline and two Random Forest experiments.
-
-### Experiment Runs
-
-| Run                                 | Model               | Main Parameters                                                 |
-| ----------------------------------- | ------------------- | --------------------------------------------------------------- |
-| `01-baseline-logistic-regression` | Logistic Regression | `C=1.0`, `class_weight=balanced`                            |
-| `02-rf-experiment-1`              | Random Forest       | `n_estimators=100`, `max_depth=10`, `min_samples_split=2` |
-| `03-rf-experiment-2`              | Random Forest       | `n_estimators=200`, `max_depth=15`, `min_samples_split=5` |
-
-All experiments use `random_state=42`.
-
-### Validation Results
-
-| Run                             |         Accuracy |  Precision (Bad) |     Recall (Bad) |         F1 (Bad) |          ROC-AUC |
-| ------------------------------- | ---------------: | ---------------: | ---------------: | ---------------: | ---------------: |
-| 01 Baseline Logistic Regression |           0.6246 |           0.1791 |           0.6645 |           0.2821 |           0.6729 |
-| 02 RF Experiment 1              |           0.6771 |           0.2104 | **0.6934** |           0.3229 |           0.7595 |
-| **03 RF Experiment 2**    | **0.7272** | **0.2400** |           0.6726 | **0.3537** | **0.7904** |
-
-Experiment 2 was selected because it achieved the strongest overall validation performance, including the highest accuracy, precision, F1-score, and ROC-AUC. Experiment 1 achieved slightly higher recall for the `Bad` class.
-
-### MLflow Evidence
-
-#### All Runs
-
-![All MLflow Runs](reports/mlflow/01_all_runs.png)
-
-#### Run Comparison
-
-![MLflow Run Comparison](reports/mlflow/02_compare_runs.png)
-
-#### Parameter Comparison
-
-![MLflow Parameter Comparison](reports/mlflow/03_compare_parameters.png)
-
-#### Metric Comparison
-
-![MLflow Metric Comparison](reports/mlflow/04_compare_metrics.png)
-
-#### Best Run
-
-![Best MLflow Run](reports/mlflow/05_best_run.png)
-
-#### Best Run Details
-
-![Best Run Details](reports/mlflow/06_best_run_detail.png)
-
----
-
-## Selected Model
-
-The selected Phase 1 model is:
-
-```text
-Random Forest – 03-rf-experiment-2
-```
-
-Parameters:
-
-```yaml
-n_estimators: 200
-max_depth: 15
-min_samples_split: 5
-random_state: 42
-class_weight: balanced
-```
-
-The model artifact is saved as:
-
-```text
-models/model.joblib
-```
-
----
-
-## Final Test Results
-
-After model selection using validation data, the selected model was evaluated on the untouched test set.
-
-| Metric                   |      Test Result |
-| ------------------------ | ---------------: |
-| Accuracy                 | **0.7281** |
-| Precision (`Bad`)      | **0.2424** |
-| Recall (`Bad`)         | **0.6822** |
-| F1 (`Bad`)             | **0.3577** |
-| ROC-AUC                  | **0.7995** |
-| Classification Threshold |             0.50 |
-
-Metrics are saved in:
-
-```text
-reports/metrics.json
-```
-
-### Confusion Matrix
-
-![Confusion Matrix](reports/figures/confusion_matrix.png)
-
-### ROC Curve
-
-![ROC Curve](reports/figures/roc_curve.png)
-
----
-
-## Running the Project
-
-### 1. Clone the Repository
-
-```bash
-git clone https://github.com/ritikalal911/loan-default-prediction-mlops.git
-cd loan-default-prediction
-```
-
-### 2. Create a Python Environment
-
-Example using Conda:
-
-```bash
-conda create -n loan-mlops python=3.12 -y
-conda activate loan-mlops
-```
-
-### 3. Install Dependencies
-
-```bash
-pip install -r requirements.txt
-```
-
-### 4. Retrieve DVC Artifacts
-
-```bash
-dvc pull
-```
-
-### 5. Reproduce the Pipeline
-
-```bash
 dvc repro
 ```
 
-### 6. View Metrics
+View metrics:
 
 ```bash
 dvc metrics show
 ```
 
-### 7. Launch MLflow
+Launch MLflow:
 
 ```bash
 mlflow ui --backend-store-uri sqlite:///mlflow.db
 ```
 
-Then open:
+## Run the API Locally
 
-```text
-http://127.0.0.1:5000
+```bash
+pip install -r requirements-api.txt
+uvicorn app.main:app --reload
 ```
 
----
+Open:
 
-## Phase 1 Deliverables
+```text
+http://127.0.0.1:8000/docs
+```
 
-- [X] GitHub repository
-- [X] Dataset documentation
-- [X] Data quality assessment
-- [X] Train/validation/test split
-- [X] DVC dataset versioning
-- [X] Architecture diagram
-- [X] Technology stack justification
-- [X] Deployment strategy
-- [X] DVC pipeline with `prepare`, `train`, `evaluate`
-- [X] DVC remote configuration
-- [X] Reproducible `dvc repro` pipeline
-- [X] MLflow baseline
-- [X] Two MLflow experiments
-- [X] MLflow comparison screenshots
-- [X] Final model evaluation
+## Run Monitoring
 
----
+Install monitoring requirements:
 
-## Phase 2 Direction
+```bash
+pip install -r requirements-monitoring.txt
+```
 
-Phase 2 will extend this workflow with:
+Run the complete monitoring workflow:
 
-- FastAPI inference endpoint
-- Docker containerization
-- Public cloud deployment
-- GitHub Actions CI/CD
-- Automated tests and validation
-- EvidentlyAI drift detection
-- Model retraining
-- Model Card
-- Final team presentation and live API demo
+```bash
+python monitoring/run_monitoring.py
+```
+
+## Project Status
+
+- Phase 1 — Dataset, architecture, DVC pipeline, MLflow experiments, evaluation: **Complete**
+- Phase 2 — API deployment, Docker, CI/CD, monitoring, retraining: **Complete**
+
+For detailed implementation information, use the documentation links at the top of this README.
