@@ -323,7 +323,7 @@ python monitoring/run_monitoring.py
 
 ## Project Status
 
-- Phase 1 — Dataset, architecture, DVC pipeline, MLflow experiments, evaluation: **Complete**
-- Phase 2 — API deployment, Docker, CI/CD, monitoring, retraining: **Complete**
+- Phase 1 - Dataset, architecture, DVC pipeline, MLflow experiments, evaluation: **Complete**
+- Phase 2 - API deployment, Docker, CI/CD, monitoring, retraining: **Complete**
 
 For detailed implementation information, use the documentation links at the top of this README.
