@@ -1,0 +1,27 @@
+{
+    "trigger": "data_drift_detected",
+    "retraining_rows": 31796,
+    "test_rows": 5612,
+    "current_model": {
+        "path": "models\\model.joblib",
+        "metrics": {
+            "accuracy": 0.7280826799714897,
+            "precision_bad": 0.24244152880775813,
+            "recall_bad": 0.6821829855537721,
+            "f1_bad": 0.35774410774410775,
+            "roc_auc": 0.7995482517397021
+        }
+    },
+    "retrained_model": {
+        "path": "models\\retrained_model.joblib",
+        "metrics": {
+            "accuracy": 0.7273699215965788,
+            "precision_bad": 0.24847476428175264,
+            "recall_bad": 0.7191011235955056,
+            "f1_bad": 0.36933223413025557,
+            "roc_auc": 0.8077866008267948
+        }
+    },
+    "roc_auc_change": 0.008238349087092645,
+    "promotion_recommended": true
+}

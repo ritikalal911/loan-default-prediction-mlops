@@ -1,0 +1,9 @@
+{
+    "total_columns": 8,
+    "drifted_columns": 5,
+    "drift_share": 0.625,
+    "threshold": 0.5,
+    "dataset_drift_detected": true,
+    "simulation": true,
+    "description": "Current data contains intentionally simulated distribution drift for the Phase 2 monitoring demonstration."
+}
