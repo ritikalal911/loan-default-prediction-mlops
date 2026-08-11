@@ -111,7 +111,7 @@ POST /predict
 
 Example prediction request:
 
-```json
+``json
 {
   "total_investment": 50000,
   "current_balance": 12000,
