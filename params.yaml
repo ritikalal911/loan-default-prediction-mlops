@@ -1,9 +1,10 @@
 prepare:
-  test_size: 0.2
+  test_size: 0.15
+  validation_size: 0.15
   random_state: 42
 
 train:
-  experiment_name: credit-card-fraud-detection
+  experiment_name: loan-default-prediction
   model_type: random_forest
   run_name: random-forest-balanced
   n_estimators: 100

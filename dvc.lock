@@ -5,67 +5,76 @@ stages:
     deps:
     - path: data/raw/credit_risk_dataset.csv
       hash: md5
-      md5: e90efcb83d69faf99fcab8b0255024de
-      size: 150828752
+      md5: edefc4ecb05ed4a06e3811a201c6decd
+      size: 2642755
     - path: src/prepare.py
       hash: md5
-      md5: 0c134a8908c72172be7e47987405ddd7
-      size: 3834
+      md5: 588d0b1d37f74c217d69b4b8c6bcfd39
+      size: 11583
     params:
       params.yaml:
         prepare:
-          test_size: 0.2
+          test_size: 0.15
+          validation_size: 0.15
           random_state: 42
     outs:
     - path: data/processed/X_test.csv
       hash: md5
-      md5: 578b3985978b1db38f44f3749c38af1b
-      size: 33867390
+      md5: 4b41b61d077ddfc34572f76ed901bc16
+      size: 663413
     - path: data/processed/X_train.csv
       hash: md5
-      md5: e458ebf70313f03127a5d587b2bff6b5
-      size: 135474639
+      md5: f3d9137bb9b16c3a4d2f442290c4195c
+      size: 3093584
+    - path: data/processed/X_val.csv
+      hash: md5
+      md5: 6086dddc045f4d1268547fdbb72b0109
+      size: 663407
     - path: data/processed/preprocessor.pkl
       hash: md5
-      md5: 47ee41bbf80ae4a15b283549e3bb4b1c
-      size: 1719
+      md5: aaf5c669496b853b7b49102e7aeffefc
+      size: 4549
     - path: data/processed/y_test.csv
       hash: md5
-      md5: 6997f6b22451ec46a3c00f551b219b6f
-      size: 341682
+      md5: 7f62b0d259c7b80b50c559dd543ed224
+      size: 33057
     - path: data/processed/y_train.csv
       hash: md5
-      md5: b3a9308ee625e1c195184053a96873f0
-      size: 1366684
+      md5: a4d5b67b24a4486b1ebb96754e3f4aab
+      size: 154204
+    - path: data/processed/y_val.csv
+      hash: md5
+      md5: f85a803e735847e330028251b81f603f
+      size: 33057
   train:
     cmd: python src/train.py
     deps:
-    - path: data/processed/X_test.csv
-      hash: md5
-      md5: 578b3985978b1db38f44f3749c38af1b
-      size: 33867390
     - path: data/processed/X_train.csv
       hash: md5
-      md5: e458ebf70313f03127a5d587b2bff6b5
-      size: 135474639
-    - path: data/processed/y_test.csv
+      md5: f3d9137bb9b16c3a4d2f442290c4195c
+      size: 3093584
+    - path: data/processed/X_val.csv
       hash: md5
-      md5: 6997f6b22451ec46a3c00f551b219b6f
-      size: 341682
+      md5: 6086dddc045f4d1268547fdbb72b0109
+      size: 663407
     - path: data/processed/y_train.csv
       hash: md5
-      md5: b3a9308ee625e1c195184053a96873f0
-      size: 1366684
+      md5: a4d5b67b24a4486b1ebb96754e3f4aab
+      size: 154204
+    - path: data/processed/y_val.csv
+      hash: md5
+      md5: f85a803e735847e330028251b81f603f
+      size: 33057
     - path: src/train.py
       hash: md5
-      md5: ce174a46599063a80dd57d1d2e34df90
-      size: 4990
+      md5: f26d366d5693862ee0259536ba0f6c2f
+      size: 7372
     params:
       params.yaml:
         train:
           experiment_name: loan-default-prediction
           model_type: random_forest
-          run_name: random-forest-balanced-final
+          run_name: random-forest-balanced
           n_estimators: 100
           max_depth: 10
           min_samples_split: 2
@@ -74,23 +83,23 @@ stages:
     outs:
     - path: models/model.joblib
       hash: md5
-      md5: 35ff7457ca2ce0a8715ad2219a487651
-      size: 3452985
+      md5: 1addbbc5e509273e7f4f02fe9cbbfbd2
+      size: 4913001
   evaluate:
     cmd: python src/evaluate.py
     deps:
     - path: data/processed/X_test.csv
       hash: md5
-      md5: 578b3985978b1db38f44f3749c38af1b
-      size: 33867390
+      md5: 4b41b61d077ddfc34572f76ed901bc16
+      size: 663413
     - path: data/processed/y_test.csv
       hash: md5
-      md5: 6997f6b22451ec46a3c00f551b219b6f
-      size: 341682
+      md5: 7f62b0d259c7b80b50c559dd543ed224
+      size: 33057
     - path: models/model.joblib
       hash: md5
-      md5: 35ff7457ca2ce0a8715ad2219a487651
-      size: 3452985
+      md5: 1addbbc5e509273e7f4f02fe9cbbfbd2
+      size: 4913001
     - path: src/evaluate.py
       hash: md5
       md5: 649a3aa004bbc80fdaea0faece2bfef1
@@ -102,13 +111,13 @@ stages:
     outs:
     - path: reports/figures/confusion_matrix.png
       hash: md5
-      md5: cec415b039ffd4cb2c32ed4e4c0d7d49
-      size: 63145
+      md5: 8c633cdf61bfb9a081acd39d3874cdb7
+      size: 64728
     - path: reports/figures/roc_curve.png
       hash: md5
-      md5: dddfaecaeff88167a4b879fee225dd3d
-      size: 78509
+      md5: 20ba90de3c49d06ca188b7fed7457869
+      size: 96972
     - path: reports/metrics.json
       hash: md5
-      md5: 3bd3c42e7dbd5eb4e84dbd6acc620733
-      size: 214
+      md5: 3b73c39a7b1ef208b36416c9e0348ff0
+      size: 217
