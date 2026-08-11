@@ -33,8 +33,7 @@ stages:
     params:
       - train
     outs:
-      - models/model.joblib:
-          cache: false
+      - models/model.joblib
 
   evaluate:
     cmd: python src/evaluate.py

@@ -1,0 +1,4 @@
+[core]
+    remote = storage
+['remote "storage"']
+    url = D:\Khushi\Seneca\SEM 2\MLOps\Project\dvc-storage
