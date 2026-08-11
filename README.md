@@ -1,4 +1,4 @@
-# Loan Default Prediction — MLOps
+# Loan Default Prediction - MLOps
 
 An end-to-end MLOps project for predicting loan quality as **Good** or **Bad** using financial and demographic customer information.
 
