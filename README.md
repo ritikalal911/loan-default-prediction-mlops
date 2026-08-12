@@ -47,7 +47,7 @@ Detailed project documentation is separated by topic:
 
 ## Dataset
 
-- **Source:** Kaggle — Credit Risk Dataset v0
+- **Source:** Kaggle - Credit Risk Dataset v0
 - **Rows:** 37,408
 - **Columns:** 10
 - **Target:** `loan_quality`
